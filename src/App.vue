@@ -301,6 +301,8 @@ export default {
           case "u":
             id = "laD";
             break;
+          default:
+            return console.log("touche de clavier qui ne marche pas")
         }
       } else {
         id = e.target.id;
@@ -392,10 +394,9 @@ export default {
       note.setAttribute("fill", color);
       letter.setAttribute("fill-opacity", "1");
       const audio = document.createElement("audio");
-      console.log("piste", piste);
+      // console.log("piste", piste);
       audio.src = piste;
       audio.play();
-      console.log(i);
       const img = document.getElementById("emoji");
       img.src = this.gifs.data[i].images.downsized.url;
     },
