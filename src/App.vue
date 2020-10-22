@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <p>The emoji piano</p>
-    <div id="container"><video id="emoji" autoplay loop muted playsinline></video></div>
+    <div id="container">
+      <img id="emoji" />
+      <img v-for="gif in gifs.data" :key="gif.images.downsized.url" :src="gif.images.downsized.url" class="hidden">
+    </div>
     <svg
       width="691"
       height="448"
@@ -65,6 +68,8 @@
           fill="white"
           class="note"
           id="do"
+          v-on:click="color"
+          v-on:keyup.q="color"
         />
         <rect
           x="165"
@@ -74,6 +79,8 @@
           fill="white"
           class="note"
           id="re"
+          v-on:click="color"
+          v-on:keyup.s="color"
         />
         <rect
           x="238"
@@ -83,6 +90,8 @@
           fill="white"
           class="note"
           id="mi"
+          v-on:click="color"
+          v-on:keyup.d="color"
         />
         <rect
           x="311"
@@ -92,6 +101,8 @@
           fill="white"
           class="note"
           id="fa"
+          v-on:click="color"
+          v-on:keyup.f="color"
         />
         <rect
           x="384"
@@ -101,6 +112,8 @@
           fill="white"
           id="sol"
           class="note"
+          v-on:click="color"
+          v-on:keyup.g="color"
         />
         <rect
           x="457"
@@ -110,42 +123,53 @@
           fill="white"
           id="la"
           class="note"
+          v-on:click="color"
+          v-on:keyup.h="color"
         />
         <path
           d="M530 80H594C596.761 80 599 82.2386 599 85V327C599 329.761 596.761 332 594 332H530V80Z"
           fill="white"
           class="note"
           id="si"
+          v-on:click="color"
+          v-on:keyup.j="color"
         />
         <path
           d="M148 80H178V259C178 261.761 175.761 264 173 264H153C150.239 264 148 261.761 148 259V80Z"
           fill="black"
           class="note"
           id="doD"
+          v-on:click="color"
+          v-on:keyup.z="color"
         />
         <path
           d="M221 80H251V259C251 261.761 248.761 264 246 264H226C223.239 264 221 261.761 221 259V80Z"
           fill="black"
           class="note"
           id="reD"
+          v-on:click="color"
+          v-on:keyup.e="color"
         />
         <path
           d="M367 80H397V259C397 261.761 394.761 264 392 264H372C369.239 264 367 261.761 367 259V80Z"
           fill="black"
           class="note"
           id="faD"
+          v-on:click="color"
         />
         <path
           d="M440 80H470V259C470 261.761 467.761 264 465 264H445C442.239 264 440 261.761 440 259V80Z"
           fill="black"
           class="note"
           id="solD"
+          v-on:click="color"
         />
         <path
           d="M513 80H543V259C543 261.761 540.761 264 538 264H518C515.239 264 513 261.761 513 259V80Z"
           fill="black"
           class="note"
           id="laD"
+          v-on:click="color"
         />
       </g>
       <defs>
@@ -200,19 +224,26 @@ export default {
   async asyncData() {},
   mounted() {
     this.asyncData();
-    this.notes = this.$el.querySelectorAll(".note");
-    console.log("coucou", this.notes);
-    this.notes.forEach((note) => {
-      note.addEventListener("click", this.color);
-    });
+    window.addEventListener("keypress", this.color);
   },
   methods: {
     async asyncData() {
       const gf = new GiphyFetch("hoc7Xw81iwUP2iewXhekupQznVmYDlHK");
 
-      // fetch 10 gifs
-      this.gifs = await gf.emoji({ limit: 12 });
-      console.log("gifs", this.gifs);
+      this.gifs = await gf.gifs([
+        "hp3dmEypS0FaoyzWLR",
+        "Wm8h2gyEY8VnJeru6f",
+        "J2awouDsf23R2vo2p5",
+        "U1sneBtWxluPUlEOiF",
+        "W3CLbW0KY3RtjsqtYO",
+        "J4hEA5xCSDWyFmSN69",
+        "Y00c0w6xxtLn067SUi",
+        "RlktKWfBX1RAwSTPxz",
+        "4tSHBpzJw7R3rrKUeo",
+        "IbaaxVxgaZAZx9ddJ4",
+        "YqFACC5oHsyy3l31k1",
+        "TF11M0XrowTQWfAgUB",
+      ]);
     },
     color(e) {
       this.notes = this.$el.querySelectorAll(".note");
@@ -231,14 +262,56 @@ export default {
       this.letters.forEach((letter) => {
         letter.setAttribute("fill-opacity", "0.4");
       });
-      console.log(e.target.id);
-      let note = document.getElementById(e.target.id);
-      console.log(note);
+      let id;
+      if (e.key) {
+        switch (e.key) {
+          case "q":
+            id = "do";
+            break;
+          case "s":
+            id = "re";
+            break;
+          case "d":
+            id = "mi";
+            break;
+          case "f":
+            id = "fa";
+            break;
+          case "g":
+            id = "sol";
+            break;
+          case "h":
+            id = "la";
+            break;
+          case "j":
+            id = "si";
+            break;
+          case "z":
+            id = "doD";
+            break;
+          case "e":
+            id = "reD";
+            break;
+          case "t":
+            id = "faD";
+            break;
+          case "y":
+            id = "solD";
+            break;
+          case "u":
+            id = "laD";
+            break;
+        }
+      } else {
+        id = e.target.id;
+      }
+      let note = document.getElementById(id);
+      // console.log(note);
       let color;
       let piste;
       let letter;
       let i;
-      switch (e.target.id) {
+      switch (id) {
         case "do":
           piste = "./assets/sounds/C.mp3";
           letter = document.getElementById("letterDo");
@@ -246,7 +319,7 @@ export default {
           i = 0;
           break;
         case "doD":
-          piste = "./assets/sounds/Cd.mp3";
+          piste = "./assets/sounds/C%23.mp3";
           letter = document.getElementById("letterDo");
           color = "#E5016F";
           i = 1;
@@ -259,7 +332,7 @@ export default {
           break;
 
         case "reD":
-          piste = "./assets/sounds/Dd.mp3";
+          piste = "./assets/sounds/D%23.mp3";
           letter = document.getElementById("letterRe");
           color = "#E5016F";
           i = 3;
@@ -277,7 +350,7 @@ export default {
           i = 5;
           break;
         case "faD":
-          piste = "./assets/sounds/Fd.mp3";
+          piste = "./assets/sounds/F%23.mp3";
           letter = document.getElementById("letterFa");
           color = "#E5016F";
           i = 6;
@@ -291,7 +364,7 @@ export default {
 
           break;
         case "solD":
-          piste = "./assets/sounds/Gd.mp3";
+          piste = "./assets/sounds/G%23.mp3";
           letter = document.getElementById("letterSol");
           color = "#E5016F";
           i = 8;
@@ -304,7 +377,7 @@ export default {
           color = "#FFD12D";
           break;
         case "laD":
-          piste = "./assets/sounds/Ad.mp3";
+          piste = "./assets/sounds/A%23.mp3";
           letter = document.getElementById("letterLa");
           color = "#E5016F";
           i = 10;
@@ -323,8 +396,8 @@ export default {
       audio.src = piste;
       audio.play();
       console.log(i);
-      const vid = document.getElementById("emoji");
-      vid.src = this.gifs.data[i].images.downsized_small.mp4;
+      const img = document.getElementById("emoji");
+      img.src = this.gifs.data[i].images.downsized.url;
     },
   },
 };
@@ -344,7 +417,6 @@ p {
   font-weight: normal;
   font-size: 30px;
   line-height: 34px;
-  /* identical to box height */
   text-align: center;
   margin: auto;
   padding: 10px;
@@ -362,7 +434,7 @@ svg {
   min-height: 37%;
   position: relative;
   justify-content: center;
-  display:flex;
+  display: flex;
 
   vertical-align: middle;
 }
@@ -370,5 +442,23 @@ svg {
   margin: auto;
   height: 100%;
   position: absolute;
+}
+@media all and (max-width: 520px) {
+  p {
+    width: 95%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+  }
+  svg {
+    width: 100%;
+    height: auto;
+    margin-top: 18%;
+  }
+  #emoji {
+    margin: auto;
+    height: 80%;
+    position: absolute;
+    margin-top: 40%;
+  }
 }
 </style>
