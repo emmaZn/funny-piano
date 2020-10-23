@@ -1,10 +1,13 @@
 <template>
   <div id="app">
+    <!-- TITLE -->
     <p>The emoji piano</p>
     <div id="container">
+      <!-- EMOJI -->
       <img id="emoji" />
-      <img v-for="gif in gifs.data" :key="gif.images.downsized.url" :src="gif.images.downsized.url" class="hidden">
+      <img id="next" class="hidden" />
     </div>
+    <!-- PIANO -->
     <svg
       width="691"
       height="448"
@@ -229,21 +232,12 @@ export default {
   methods: {
     async asyncData() {
       const gf = new GiphyFetch("hoc7Xw81iwUP2iewXhekupQznVmYDlHK");
-
-      this.gifs = await gf.gifs([
-        "hp3dmEypS0FaoyzWLR",
-        "Wm8h2gyEY8VnJeru6f",
-        "J2awouDsf23R2vo2p5",
-        "U1sneBtWxluPUlEOiF",
-        "W3CLbW0KY3RtjsqtYO",
-        "J4hEA5xCSDWyFmSN69",
-        "Y00c0w6xxtLn067SUi",
-        "RlktKWfBX1RAwSTPxz",
-        "4tSHBpzJw7R3rrKUeo",
-        "IbaaxVxgaZAZx9ddJ4",
-        "YqFACC5oHsyy3l31k1",
-        "TF11M0XrowTQWfAgUB",
-      ]);
+      this.gifs = await gf.emoji({
+        limit: 97,
+      });
+      const random = Math.floor(Math.random() * 97);
+      const next = document.getElementById("next");
+      next.src = this.gifs.data[random].images.downsized.url;
     },
     color(e) {
       this.notes = this.$el.querySelectorAll(".note");
@@ -302,7 +296,7 @@ export default {
             id = "laD";
             break;
           default:
-            return console.log("touche de clavier qui ne marche pas")
+            return console.log("touche de clavier qui ne marche pas");
         }
       } else {
         id = e.target.id;
@@ -312,82 +306,66 @@ export default {
       let color;
       let piste;
       let letter;
-      let i;
       switch (id) {
         case "do":
           piste = "./assets/sounds/C.mp3";
           letter = document.getElementById("letterDo");
           color = "#FFD12D";
-          i = 0;
           break;
         case "doD":
           piste = "./assets/sounds/C%23.mp3";
           letter = document.getElementById("letterDo");
           color = "#E5016F";
-          i = 1;
           break;
         case "re":
           piste = "./assets/sounds/D.mp3";
           letter = document.getElementById("letterRe");
           color = "#FFD12D";
-          i = 2;
           break;
 
         case "reD":
           piste = "./assets/sounds/D%23.mp3";
           letter = document.getElementById("letterRe");
           color = "#E5016F";
-          i = 3;
           break;
         case "mi":
           piste = "./assets/sounds/E.mp3";
           letter = document.getElementById("letterMi");
           color = "#FFD12D";
-          i = 4;
           break;
         case "fa":
           piste = "./assets/sounds/F.mp3";
           letter = document.getElementById("letterFa");
           color = "#FFD12D";
-          i = 5;
           break;
         case "faD":
           piste = "./assets/sounds/F%23.mp3";
           letter = document.getElementById("letterFa");
           color = "#E5016F";
-          i = 6;
-
           break;
         case "sol":
           piste = "./assets/sounds/G.mp3";
           letter = document.getElementById("letterSol");
           color = "#FFD12D";
-          i = 7;
-
           break;
         case "solD":
           piste = "./assets/sounds/G%23.mp3";
           letter = document.getElementById("letterSol");
           color = "#E5016F";
-          i = 8;
-
           break;
         case "la":
           piste = "./assets/sounds/A.mp3";
           letter = document.getElementById("letterLa");
-          i = 9;
           color = "#FFD12D";
           break;
         case "laD":
           piste = "./assets/sounds/A%23.mp3";
           letter = document.getElementById("letterLa");
           color = "#E5016F";
-          i = 10;
           break;
         case "si":
           piste = "./assets/sounds/B.mp3";
           letter = document.getElementById("letterSi");
-          i = 11;
           color = "#FFD12D";
           break;
       }
@@ -397,8 +375,11 @@ export default {
       // console.log("piste", piste);
       audio.src = piste;
       audio.play();
-      const img = document.getElementById("emoji");
-      img.src = this.gifs.data[i].images.downsized.url;
+      const random = Math.floor(Math.random() * 97);
+      const current = document.getElementById("emoji");
+      const next = document.getElementById("next");
+      current.src = next.src;
+      next.src = this.gifs.data[random].images.downsized.url;
     },
   },
 };
