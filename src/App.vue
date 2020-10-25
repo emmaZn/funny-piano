@@ -235,9 +235,10 @@ export default {
       this.gifs = await gf.emoji({
         limit: 97,
       });
+      console.log(this.gifs)
       const random = Math.floor(Math.random() * 97);
       const next = document.getElementById("next");
-      next.src = this.gifs.data[random].images.downsized.url;
+      next.src = this.gifs.data[random].images.fixed_width.webp;
     },
     color(e) {
       this.notes = this.$el.querySelectorAll(".note");
@@ -379,7 +380,7 @@ export default {
       const current = document.getElementById("emoji");
       const next = document.getElementById("next");
       current.src = next.src;
-      next.src = this.gifs.data[random].images.downsized.url;
+      next.src = this.gifs.data[random].images.fixed_width.webp;
     },
   },
 };
